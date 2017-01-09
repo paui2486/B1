@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="0dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.sam.andtest.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+    <Button
+        android:text="會員"
+        android:layout_height="wrap_content"
+        android:id="@+id/go2"
+        android:textSize="30sp"
+        android:layout_width="120dp"
+        android:layout_marginRight="0sp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="go2" />
+
+    <Button
+        android:text="暫無"
+        android:layout_height="wrap_content"
+        android:id="@+id/go3"
+        android:onClick="go3"
+        android:textSize="30sp"
+        android:layout_width="120dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pb"
+        android:max="100"
+        android:progress="30"
+        android:indeterminate="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="-7dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/go2"
+        android:layout_alignParentStart="true"
+        android:paddingTop="150dp">
+
+        <WebView
+            android:layout_height="match_parent"
+            android:id="@+id/wv"
+            android:layout_width="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

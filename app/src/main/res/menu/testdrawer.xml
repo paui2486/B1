@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="美食" />
+    <group android:checkableBehavior="single">
+        <item android:title="北部美食"
+            android:id="@+id/NAV_C" />
+        <item android:title="中部美食"
+            android:id="@+id/NAV_G" />
+        <item android:title="南部美食"
+            android:id="@+id/NAV_S" />
+        <item android:title="異國美食"
+            android:id="@+id/NAV_M"
+            android:checked="false" />
+    </group>
+    <item android:title="美妝保養" >
+        <menu >
+            <item android:title="美妝保養"
+                android:id="@+id/NAV_B" />
+        </menu>
+    </item>
+    <item android:title="流行穿搭" >
+        <menu >
+            <item android:title="流行穿搭"
+                android:id="@+id/NAV_P" />
+        </menu>
+    </item>
+    <item android:title="韓劇追星" >
+        <menu >
+            <item android:title="韓劇追星"
+                android:id="@+id/NAV_K" />
+        </menu>
+    </item>
+</menu>
