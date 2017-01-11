@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                // Toast.makeText(MainActivity.this, "Fab clicked", Toast.LENGTH_LONG).show();
-                 Intent tt = new Intent(getApplicationContext(), MapsActivity.class);//跳頁簡單說明 先有一個目標(頁面) 在原本頁面有元件(button)動作跳轉到地圖頁面
+                 Intent tt = new Intent(getApplicationContext(), com.example.sam.andtest.MapsActivity.class);//跳頁簡單說明 先有一個目標(頁面) 在原本頁面有元件(button)動作跳轉到地圖頁面
                  startActivity(tt); //實作 it
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 //        .setAction("Action", null).show();
