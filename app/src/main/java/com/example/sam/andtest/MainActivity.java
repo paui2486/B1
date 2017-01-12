@@ -31,13 +31,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-//import com.bumptech.glide.Glide;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-//import com.zhy.http.okhttp.OkHttpUtils;
-//import com.zhy.http.okhttp.callback.BitmapCallback;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.BitmapCallback;
 
 
 import java.util.ArrayList;
@@ -55,21 +55,28 @@ public class MainActivity extends AppCompatActivity
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-
+    // 廣告輪播宣告開始
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private Banner mBanner;
+    private List<BannerModel> mDatas = new ArrayList<>();
+    Button mRefreshButton;
+    int num = 1;
+    private Context mContext;
+    //廣告輪播宣告結束
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar); //這個物件是上方的 條狀物
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar); //右上方 預設系統選項設定 圖標 應為我沒設定 所以關起來
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                // Toast.makeText(MainActivity.this, "Fab clicked", Toast.LENGTH_LONG).show();
-                 Intent tt = new Intent(getApplicationContext(), MapsActivity.class);//跳頁簡單說明 先有一個目標(頁面) 在原本頁面有元件(button)動作跳轉到地圖頁面
+                 Intent tt = new Intent(getApplicationContext(), com.example.sam.andtest.MapsActivity.class);//跳頁簡單說明 先有一個目標(頁面) 在原本頁面有元件(button)動作跳轉到地圖頁面
                  startActivity(tt); //實作 it
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 //        .setAction("Action", null).show();
@@ -107,9 +114,116 @@ public class MainActivity extends AppCompatActivity
             }
         });
         wv.loadUrl("https://b1.media/");  // 連到B1網站，
+        //
+        mContext = this;
 
+        mBanner = (Banner) findViewById(R.id.id_banner);
+
+        BannerAdapter adapter = new BannerAdapter<BannerModel>(mDatas) {
+            @Override
+            protected void bindTips(TextView tv, BannerModel bannerModel) {
+                tv.setText(bannerModel.getTips());
+            }
+
+            @Override
+            public void bindImage(ImageView imageView, BannerModel bannerModel) {
+                Glide.with(mContext)
+                        .load(bannerModel.getImageUrl())
+                        .placeholder(R.mipmap.empty)
+                        .error(R.mipmap.error)
+                        .into(imageView);
+            }
+
+        };
+        mBanner.setBannerAdapter(adapter);
+
+        getNetData();
+        //
     }
+    // 檢查網路功能 開始
+    private void getNetData() {
+        Log.d(TAG, "getNetData: ");
+        OkHttpUtils.get()
+                .url("https://gw.alicdn.com/tps/i3/TB1J9GqJXXXXXcZaXXXdIns_XXX-1125-352.jpg_q50.jpg")//用訪問這張圖片 確定網路功能
+                .build().execute(new BitmapCallback() {
+            //@Override
+            public void onError(Call call, Exception e) {
+                Toast.makeText(mContext, "網路異常", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onError: okhttp 網路訪問異常" + "Exception" + e.getMessage() + "exception+fillInStackTrace()" + e.fillInStackTrace());
+            }
 
+            @Override
+            public void onError(okhttp3.Call call, Exception e) {
+
+            }
+
+            @Override
+            public void onResponse(Bitmap bitmap) {
+                //Log.d(TAG, "onResponse: " + num++);
+                //Log.d(TAG, "onResponse: " + num++); 原始版
+                Log.d(TAG, "onResponse: " + num); //我改版
+                if (num % 2 == 1)
+                    getData();
+                else {
+                    getData2();/////*****
+                }
+
+            }
+        });
+    }
+    //檢查網路功能 結束
+    //banner 資料開始
+    private void getData() {
+        mDatas.clear();
+        BannerModel model = null;
+        model = new BannerModel();// 這裡要注意每次新建的資料夾 位置
+        //例如這裡是 JAVA 底下com 底下example.sam.myapplication底下BannerModel() 這裡我是採取絕對路徑沒有好壞
+        //最原始範例　model = new BannerModel(); 是抓相對路徑
+        model.setImageUrl("https://b1.media/wp-content/uploads/2017/01/curly-icecream.jpg");
+        //model.setTips("这是页面1");// 可以加上文字
+        mDatas.add(model);
+        model = new com.example.sam.andtest.BannerModel();
+        model.setImageUrl("https://b1.media/wp-content/uploads/2017/01/kyoya2.jpg");
+        //model.setTips("这是页面2");
+        mDatas.add(model);
+        model = new com.example.sam.andtest.BannerModel();
+        model.setImageUrl("https://b1.media/wp-content/uploads/2017/01/wed.jpg");
+        //model.setTips("这是页面3");
+        mDatas.add(model);
+        model = new com.example.sam.andtest.BannerModel();
+        model.setImageUrl("https://b1.media/wp-content/uploads/2017/01/Shimizu2.jpg");
+        //model.setTips("这是页面4");
+        mDatas.add(model);
+        model = new com.example.sam.andtest.BannerModel();
+        model.setImageUrl("https://b1.media/wp-content/uploads/2017/01/ware.jpg");
+        //model.setTips("这是页面5");
+        mDatas.add(model);
+        model = new com.example.sam.andtest.BannerModel();
+        model.setImageUrl("https://b1.media/wp-content/uploads/2017/01/jo.jpg");
+        //model.setTips("这是页面6");
+        mDatas.add(model);
+        mBanner.notifiDataHasChanged();
+    }
+    //banner 資料結束
+    //副banner 資料開始
+    private void getData2() {//這裡是一開進去的廣告
+        mDatas.clear();
+        com.example.sam.andtest.BannerModel model = null;
+        model = new com.example.sam.andtest.BannerModel();
+        model.setImageUrl("https://gw.alicdn.com/tps/i3/TB1J9GqJXXXXXcZaXXXdIns_XXX-1125-352.jpg_q50.jpg");
+        model.setTips("这是页面1");
+        mDatas.add(model);//這裡是一開進去的
+        model = new com.example.sam.andtest.BannerModel();
+        model.setImageUrl("https://gma.alicdn.com/simba/img/TB1txffHVXXXXayXVXXSutbFXXX.jpg_q50.jpg");
+        model.setTips("这是页面2");
+//        mDatas.add(model); //
+        model = new com.example.sam.andtest.BannerModel();
+        model.setImageUrl("https://gw.alicdn.com/tps/i2/TB1ku8oMFXXXXciXpXXdIns_XXX-1125-352.jpg_q50.jpg");
+        model.setTips("这是页面3");
+//        mDatas.add(model);
+        mBanner.notifiDataHasChanged();
+    }
+    //副banner 資料結束
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
