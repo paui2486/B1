@@ -33,12 +33,15 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.LocationSource;
 
 public class MapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         OnMyLocationButtonClickListener
          {
-
+         //    int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+         private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+         private boolean mPermissionDenied = false;
     private GoogleMap mMap; //操控地圖的物件
     private Marker marker_TA101;
     private Marker marker_ATT;
@@ -64,7 +67,7 @@ public class MapsActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        BFD();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);//連結xml fragment元件 名稱是 map
@@ -79,18 +82,19 @@ public class MapsActivity extends AppCompatActivity implements
     public void onMapReady(GoogleMap googleMap) { //建置地圖時
 
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);    // 顯示『我的位置』圖示按鈕
+
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.moveCamera(CameraUpdateFactory.zoomTo(17));    // 將地圖縮放級數改為 17
         //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
         mMap.setOnMyLocationButtonClickListener(this);
-
+        //mMap.setMyLocationEnabled(true);    // 顯示『我的位置』圖示按鈕
+        enableMyLocation();
         setmap();
     }
     private void setmap(){
-
-        addMarkersToMap();
-
+        BFD();//地點經緯度
+        addMarkersToMap();//地點資料
+        //以下2行設定中心點 縮放比
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(TA101,Zoom));//畫面中心點
         mMap.setInfoWindowAdapter(new MyInfoWindowAdapter());
     }
@@ -190,8 +194,51 @@ public class MapsActivity extends AppCompatActivity implements
             return null;
         }
 
-
     }
+             private void enableMyLocation() {
+                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                         != PackageManager.PERMISSION_GRANTED) {
+                     // Permission to access the location is missing.
+                     PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                             Manifest.permission.ACCESS_FINE_LOCATION, true);
+                 } else if (mMap != null) {
+                     // Access to the location has been granted to the app.
+                     mMap.setMyLocationEnabled(true);
+                 }
+             }
+             @Override
+             public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                    @NonNull int[] grantResults) {
+                 if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+                     return;
+                 }
+
+                 if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                         Manifest.permission.ACCESS_FINE_LOCATION)) {
+                     // Enable the my location layer if the permission has been granted.
+                     enableMyLocation();
+                 } else {
+                     // Display the missing permission error dialog when the fragments resume.
+                     mPermissionDenied = true;
+                 }
+             }
+             @Override
+             protected void onResumeFragments() {
+                 super.onResumeFragments();
+                 if (mPermissionDenied) {
+                     // Permission was not granted, display error dialog.
+                     showMissingPermissionError();
+                     mPermissionDenied = false;
+                 }
+             }
+
+             /**
+              * Displays a dialog with error message explaining that the location permission is missing.
+              */
+             private void showMissingPermissionError() {
+                 PermissionUtils.PermissionDeniedDialog
+                         .newInstance(true).show(getSupportFragmentManager(), "dialog");
+             }
 
 }
 
